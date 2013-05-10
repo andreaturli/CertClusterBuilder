@@ -1,33 +1,40 @@
 package com.cloudera.cert;
 
-import brooklyn.config.BrooklynProperties;
-import brooklyn.entity.basic.Attributes;
-import brooklyn.entity.basic.Lifecycle;
-import brooklyn.event.SensorEvent;
-import brooklyn.event.SensorEventListener;
-import brooklyn.launcher.BrooklynLauncher;
-import brooklyn.launcher.BrooklynServerDetails;
-import brooklyn.location.Location;
-import brooklyn.location.basic.BasicLocationRegistry;
-import brooklyn.management.ManagementContext;
-import brooklyn.util.CommandLineUtil;
-import io.cloudsoft.cloudera.SampleClouderaManagedCluster;
-import io.cloudsoft.cloudera.brooklynnodes.ClouderaManagerNode;
-import io.cloudsoft.cloudera.brooklynnodes.WhirrClouderaManager;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import io.cloudsoft.cloudera.SampleClouderaManagedClusterInterface;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import brooklyn.config.BrooklynProperties;
+import brooklyn.entity.basic.Entities;
+import brooklyn.entity.basic.Lifecycle;
+import brooklyn.entity.proxying.EntitySpecs;
+import brooklyn.launcher.BrooklynLauncher;
+import brooklyn.location.cloud.CloudLocationConfig;
+
+import com.google.common.base.Charsets;
+import com.google.common.base.Stopwatch;
+import com.google.common.base.Strings;
+import com.google.common.io.Files;
 
 /**
  *
  * @author daniel@cloudera.com
  */
 public class CertClusterBuilder {
+    
+    private static final Logger log = LoggerFactory.getLogger(CertClusterBuilder.class);
     private static int port = 8081;
     private static ClusterBuilderFrame frame = null;
     private static final ExecutorService pool = Executors.newSingleThreadExecutor(new ThreadFactory() {
@@ -77,78 +84,45 @@ public class CertClusterBuilder {
 
             @Override
             public void run() {
-                CertClusterBuilder.deployCluster(cloudCode, cloudSpecifier, identity, credentials);
-            }
-        });
-    }
-    
-    private static void deployCluster(String cloudCode, String cloudSpecifier, String identity, String credentials) {
-        BrooklynServerDetails details = BrooklynLauncher.newLauncher().
-                webconsolePort(CommandLineUtil.getCommandLineOption(Collections.EMPTY_LIST, "--port", "8081+")).
-                launch();
-        
-        port = details.getWebServer().getActualPort();
-
-        // get the mgmt context (and also the webconsole URL) from this details container
-        ManagementContext mgmt;
-        mgmt = details.getManagementContext();
-
-        
-        String cloudName = cloudCode;
-        
-        if (cloudSpecifier != null) {
-            cloudName += ":" + cloudSpecifier;
-        }
-
-        // to set cloud credentials (needed to roll-out the application)
-        ((BrooklynProperties) mgmt.getConfig()).put("brooklyn.jclouds." + cloudCode + ".identity", identity);
-        ((BrooklynProperties) mgmt.getConfig()).put("brooklyn.jclouds." + cloudCode + ".credential", credentials);
-
-        final SampleClouderaManagedCluster app1 = new SampleClouderaManagedCluster();
-        app1.setDisplayName("Brooklyn Cloudera Managed Cluster");
-        
-        details.getManagementContext().getEntityManager().manage(app1);
-        mgmt.getSubscriptionManager().subscribe(app1, Attributes.SERVICE_STATE, new SensorEventListener<Lifecycle>() {
-            @Override
-            public void onEvent(SensorEvent<Lifecycle> event) {
-                if (event.getValue() == Lifecycle.RUNNING) {
-                    updateStatus(event.getValue(), app1.getAttribute(ClouderaManagerNode.CLOUDERA_MANAGER_URL));
-                } else {
-                    updateStatus(event.getValue());
+                try {
+                    CertClusterBuilder.deployCluster(cloudCode, cloudSpecifier, identity, credentials);
+                } catch (Exception e) {
+                    log.error("Cannot deploy cluster with provider: " + cloudCode + 
+                            (cloudSpecifier != null ? ":" + cloudSpecifier : "") + ", identity: " + identity + 
+                            ", credential: " + credentials, e);
+                    System.exit(1);
                 }
             }
         });
-        mgmt.getSubscriptionManager().subscribe(app1, SampleClouderaManagedCluster.CLOUDERA_MANAGER_URL, new SensorEventListener<String>() {
-            @Override
-            public void onEvent(SensorEvent<String> event) {
-                updateStatus(app1.getAttribute(Attributes.SERVICE_STATE), event.getValue());
-            }
-        });
-
-        List<Location> locations = new BasicLocationRegistry(details.getManagementContext()).resolve(Collections.singleton(cloudName));
-
-        // to start app (NB this call is synchronous, takes about 10m to return)
-        app1.start(locations);
-
-        // to find out the CDH endpoint
-        System.out.println("CDH Manager running at: " + app1.getManager().getAttribute(WhirrClouderaManager.CLOUDERA_MANAGER_URL));
-
-        // to collect metrics (again, synchronous)
-//        String directory = app1.getServices().collectMetrics();
-//        System.out.println("Metrics stored in: " + directory);
-//
-//        // to stop:
-//        app1.stop();
-
-        // can also start multiple apps...            
-//            app2.start(locations);
     }
     
-    private static void updateStatus(Lifecycle appStatus) {
-        frame.setStatus(appStatus.toString().toUpperCase());
+    private static void deployCluster(String cloudCode, String cloudSpecifier, String identity, String credentials) throws IOException {
+        BrooklynProperties brooklynProperties = BrooklynProperties.Factory.newEmpty();
+        String access_identity = checkNotNull(Strings.emptyToNull(identity), "identity must not be null");
+        String access_credential = checkNotNull(Strings.emptyToNull(credentials), "credentials must not be null");
+        brooklynProperties.put(CloudLocationConfig.ACCESS_IDENTITY, access_identity);
+        brooklynProperties.put(CloudLocationConfig.ACCESS_CREDENTIAL, access_credential);
+        String location = checkNotNull(Strings.emptyToNull(cloudCode), "cloudCode must not be null");
+        if(!Strings.isNullOrEmpty(cloudSpecifier)) { location += ":" + cloudSpecifier; }
+
+        log.info("Start time for CDH deployment on '" + location +"'");
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.start();
+        BrooklynLauncher launcher = BrooklynLauncher.newInstance()
+                                                    .application(
+                                                            EntitySpecs.appSpec(SampleClouderaManagedClusterInterface.class)
+                                                            .displayName("Brooklyn Cloudera Managed Cluster"))
+                                                    .webconsolePort(port)
+                                                    .location(location)
+                                                    .brooklynProperties(brooklynProperties)
+                                                    .shutdownOnExit(true)
+                                                    .start();
+        Entities.dumpInfo(launcher.getApplications());
+        final SampleClouderaManagedClusterInterface app = 
+                (SampleClouderaManagedClusterInterface) getOnlyElement(launcher.getApplications());
+        app.startServices(true, false);
+        stopwatch.stop(); 
+        log.info("Time to deploy " + location + ": " + stopwatch.elapsed(TimeUnit.SECONDS) + " seconds");
     }
-    
-    private static void updateStatus(Lifecycle appStatus, String url) {
-        frame.setStatus(appStatus.toString().toUpperCase() + ": " + url);
-    }
+
 }
