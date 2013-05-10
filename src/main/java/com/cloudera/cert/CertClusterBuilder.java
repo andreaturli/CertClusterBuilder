@@ -12,6 +12,7 @@ import brooklyn.location.basic.BasicLocationRegistry;
 import brooklyn.management.ManagementContext;
 import brooklyn.util.CommandLineUtil;
 import io.cloudsoft.cloudera.SampleClouderaManagedCluster;
+import io.cloudsoft.cloudera.brooklynnodes.ClouderaManagerNode;
 import io.cloudsoft.cloudera.brooklynnodes.WhirrClouderaManager;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -103,14 +104,15 @@ public class CertClusterBuilder {
         ((BrooklynProperties) mgmt.getConfig()).put("brooklyn.jclouds." + cloudCode + ".identity", identity);
         ((BrooklynProperties) mgmt.getConfig()).put("brooklyn.jclouds." + cloudCode + ".credential", credentials);
 
-        final SampleClouderaManagedCluster app1 = new SampleClouderaManagedCluster(Collections.singletonMap((Object) "name", (Object) "Brooklyn Cloudera Managed Cluster"));
+        final SampleClouderaManagedCluster app1 = new SampleClouderaManagedCluster();
+        app1.setDisplayName("Brooklyn Cloudera Managed Cluster");
         
         details.getManagementContext().getEntityManager().manage(app1);
         mgmt.getSubscriptionManager().subscribe(app1, Attributes.SERVICE_STATE, new SensorEventListener<Lifecycle>() {
             @Override
             public void onEvent(SensorEvent<Lifecycle> event) {
                 if (event.getValue() == Lifecycle.RUNNING) {
-                    updateStatus(event.getValue(), app1.getAttribute(SampleClouderaManagedCluster.CLOUDERA_MANAGER_URL));
+                    updateStatus(event.getValue(), app1.getAttribute(ClouderaManagerNode.CLOUDERA_MANAGER_URL));
                 } else {
                     updateStatus(event.getValue());
                 }

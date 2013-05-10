@@ -4,6 +4,8 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -14,6 +16,15 @@ import java.util.logging.Logger;
  * @author daniel@cloudera.com
  */
 public class ClusterBuilderFrame extends javax.swing.JFrame {
+    private static final String HP_CLOUD = "HPCloud";
+    private static final String IBM_CLOUD_FIRST_FACTORY = "IBM CloudFirst Factory";
+    private static final String GOOGLE = "Google";
+    private static final String RACKSPACE_FIRST_GENERATION = "Rackspace First Generation";
+    private static final String RACKSPACE_SECOND_GENERATION = "Rackspace Second Generation";
+    private static final String GO_GRID = "Go Grid";
+    private static final String AWS_CLOUD_GOV = "AWS Cloud Gov";
+    private static final String AMAZON_US_WEST = "Amazon US West";
+    private static final String AMAZON_US_EAST = "Amazon US East";
     private static final String DEFAULT_MESSAGE = "Ready";
     private static ConsoleFrame consoleFrame = null;
     private static final Timer delayTimer = new Timer();
@@ -54,7 +65,7 @@ public class ClusterBuilderFrame extends javax.swing.JFrame {
         deploy = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel9 = new javax.swing.JLabel();
-        provider = new javax.swing.JComboBox();
+        provider = new ProviderComboBox();
         status = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -109,7 +120,10 @@ public class ClusterBuilderFrame extends javax.swing.JFrame {
         jLabel9.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         jLabel9.setText("Provider");
 
-        provider.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Amazon East", "Amazon West", "Go Grid", "Rackspace" }));
+        provider.setModel(new javax.swing.DefaultComboBoxModel(new String[] { AMAZON_US_EAST, AMAZON_US_WEST, AWS_CLOUD_GOV, GOOGLE, GO_GRID, HP_CLOUD, IBM_CLOUD_FIRST_FACTORY, RACKSPACE_FIRST_GENERATION, RACKSPACE_SECOND_GENERATION }));
+        Set<Integer> set = new HashSet<Integer>();
+        set.add(2); set.add(5); set.add(8);
+        provider.setDisableIndex(set);
 
         status.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         status.setForeground(new java.awt.Color(51, 51, 51));
@@ -236,16 +250,27 @@ public class ClusterBuilderFrame extends javax.swing.JFrame {
 
         setStatus("Deploying to "+cloudName+"...");
 
-        if (cloudName.equals("Amazon East")) {
+        if (cloudName.equals(AMAZON_US_EAST)) {
             cloudCode = "aws-ec2";
             cloudSpec = "us-east-1";
-        } else if (cloudName.equals("Amazon West")) {
+        } else if (cloudName.equals(AMAZON_US_WEST)) {
             cloudCode = "aws-ec2";
             cloudSpec = "us-west-1";
-        } else if (cloudName.equals("Rackspace")) {
+        } else if (cloudName.equals(AWS_CLOUD_GOV)) {
+            cloudCode = "aws-ec2";
+            cloudSpec = "????";            
+        } else if (cloudName.equals(RACKSPACE_FIRST_GENERATION)) {
+            cloudCode = "cloudservers-us";
+        } else if (cloudName.equals(GOOGLE)) {
+            cloudCode = "google-compute-engine";            
+        } else if (cloudName.equals(RACKSPACE_SECOND_GENERATION)) {
             cloudCode = "rackspace-cloudservers-us";
-        } else if (cloudName.equals("Go Grid")) {
+        } else if (cloudName.equals(GO_GRID)) {
             cloudCode = "gogrid";
+        } else if (cloudName.equals(IBM_CLOUD_FIRST_FACTORY)) {
+            cloudCode = "openstack-nova";
+        } else if (cloudName.equals(HP_CLOUD)) {
+            cloudCode = "openstack-nova";            
         }
 
         consoleFrame.addOutput("Launching cluster...\n");
@@ -349,7 +374,7 @@ public class ClusterBuilderFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPasswordField passwordField;
-    private javax.swing.JComboBox provider;
+    private ProviderComboBox provider;
     private javax.swing.JLabel status;
     private javax.swing.JPasswordField userField;
     // End of variables declaration//GEN-END:variables
