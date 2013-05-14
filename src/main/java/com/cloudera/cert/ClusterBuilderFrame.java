@@ -28,18 +28,19 @@ public class ClusterBuilderFrame extends javax.swing.JFrame implements ActionLis
     
     private static final Logger log = LoggerFactory.getLogger(ClusterBuilderFrame.class);
 
-    private static final String HP_CLOUD = "HPCloud";
+    private static final String HP_CLOUD = "HPCloud Services";
     private static final String IBM_CLOUD_FIRST_FACTORY = "IBM CloudFirst Factory";
-    private static final String GOOGLE = "Google";
+    private static final String IBM_SMART_CLOUD_ENTERPRISE = "IBM SmartCloud Enterprise";
+    private static final String GOOGLE = "Google Compute Engine";
     private static final String RACKSPACE_FIRST_GENERATION = "Rackspace First Generation";
-    private static final String RACKSPACE_SECOND_GENERATION = "Rackspace Second Generation";
-    private static final String GO_GRID = "Go Grid";
-    private static final String AWS_CLOUD_GOV = "AWS Cloud Gov";
+    private static final String RACKSPACE_NEXT_GENERATION = "Rackspace Cloud";
+    private static final String AWS_CLOUD_GOV = "AWS GovCloud (US)";
     private static final String AMAZON_US_WEST = "Amazon US West";
     private static final String AMAZON_US_EAST = "Amazon US East";
     private static final String DEFAULT_MESSAGE = "Ready";
     private static ConsoleFrame consoleFrame = null;
     private static final Timer delayTimer = new Timer();
+
     private TimerTask delayTask = null;
     /** the last status set (excluding {@link #setTempStatus(String)}) */
     private String lastPermanentStatus = DEFAULT_MESSAGE;
@@ -133,9 +134,9 @@ public class ClusterBuilderFrame extends javax.swing.JFrame implements ActionLis
         jLabel9.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         jLabel9.setText("Provider");
 
-        provider.setModel(new javax.swing.DefaultComboBoxModel(new String[] { AMAZON_US_EAST, AMAZON_US_WEST, AWS_CLOUD_GOV, GOOGLE, GO_GRID, HP_CLOUD, IBM_CLOUD_FIRST_FACTORY, RACKSPACE_FIRST_GENERATION, RACKSPACE_SECOND_GENERATION }));
+        provider.setModel(new javax.swing.DefaultComboBoxModel(new String[] { AMAZON_US_EAST, AMAZON_US_WEST, AWS_CLOUD_GOV, GOOGLE, HP_CLOUD, IBM_SMART_CLOUD_ENTERPRISE, IBM_CLOUD_FIRST_FACTORY, RACKSPACE_NEXT_GENERATION }));
         Set<Integer> set = new HashSet<Integer>();
-        set.add(2); set.add(5); set.add(8);
+        set.add(2);
         provider.setDisableIndex(set);
 
         status.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
@@ -281,10 +282,10 @@ public class ClusterBuilderFrame extends javax.swing.JFrame implements ActionLis
             cloudCode = "cloudservers-us";
         } else if (cloudName.equals(GOOGLE)) {
             cloudCode = "google-compute-engine";            
-        } else if (cloudName.equals(RACKSPACE_SECOND_GENERATION)) {
+        } else if (cloudName.equals(RACKSPACE_NEXT_GENERATION)) {
             cloudCode = "rackspace-cloudservers-us";
-        } else if (cloudName.equals(GO_GRID)) {
-            cloudCode = "gogrid";
+        } else if (cloudName.equals(IBM_SMART_CLOUD_ENTERPRISE)) {
+            cloudCode = "smart-cloud";
         } else if (cloudName.equals(IBM_CLOUD_FIRST_FACTORY)) {
             cloudCode = "openstack-nova";
         } else if (cloudName.equals(HP_CLOUD)) {

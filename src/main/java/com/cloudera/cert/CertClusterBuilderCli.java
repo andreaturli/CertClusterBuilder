@@ -39,26 +39,22 @@ public class CertClusterBuilderCli {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-
-        /*
-        if (args.length < PARAMETERS)
-            throw new IllegalArgumentException(INVALID_SYNTAX);
-        String provider = args[0];
-        String identity = args[1];
-        String credential = args[2];
-        */
+//        if (args.length < PARAMETERS)
+//            throw new IllegalArgumentException(INVALID_SYNTAX);
+//        String provider = args[0];
+//        String identity = args[1];
+//        String credential = args[2];
+        
         List argv = Lists.newArrayList(args);
         String location = CommandLineUtil.getCommandLineOption(argv, "--location", DEFAULT_LOCATION);
         String port = CommandLineUtil.getCommandLineOption(argv, "--port", "8081+");
-
-        /*
-        BrooklynProperties brooklynProperties = BrooklynProperties.Factory.newEmpty();
-        String access_identity = checkNotNull(Strings.emptyToNull(identity), "identity must not be null");
-        String access_credential = checkNotNull(Strings.emptyToNull(credential), "credential must not be null");
-        brooklynProperties.put(CloudLocationConfig.ACCESS_IDENTITY, access_identity);
-        brooklynProperties.put(CloudLocationConfig.ACCESS_CREDENTIAL, access_credential);
-        String location = checkNotNull(Strings.emptyToNull(provider), "provider must not be null");
-        */
+//        BrooklynProperties brooklynProperties = BrooklynProperties.Factory.newDefault();
+//        String access_identity = checkNotNull(Strings.emptyToNull(identity), "identity must not be null");
+//        String access_credential = checkNotNull(Strings.emptyToNull(credential), "credential must not be null");
+//        brooklynProperties.put(CloudLocationConfig.ACCESS_IDENTITY, access_identity);
+//        brooklynProperties.put(CloudLocationConfig.ACCESS_CREDENTIAL, access_credential);
+//        brooklynProperties.put(CloudLocationConfig.CLOUD_ENDPOINT, "https://cloudfirst.demos.ibm.com/keystone/v2.0");
+//        //String location = checkNotNull(Strings.emptyToNull(provider), "provider must not be null");
         log.info("Start time for CDH deployment on '" + location +"'");
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.start();
@@ -69,8 +65,9 @@ public class CertClusterBuilderCli {
                                                     .webconsolePort(port)
                                                     .location(location)
                                                     //.brooklynProperties(brooklynProperties)
-                                                    .shutdownOnExit(true)
-                                                    .start();
+                                                    .shutdownOnExit(true);
+        
+        launcher.start();
         Entities.dumpInfo(launcher.getApplications());
         final SampleClouderaManagedClusterInterface app = 
                 (SampleClouderaManagedClusterInterface) getOnlyElement(launcher.getApplications());
