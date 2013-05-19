@@ -28,7 +28,7 @@ public class ClusterBuilderFrame extends javax.swing.JFrame implements ActionLis
     
     private static final Logger log = LoggerFactory.getLogger(ClusterBuilderFrame.class);
 
-    private static final String HP_CLOUD = "HPCloud Services";
+    private static final String HP_CLOUD = "HP Cloud Services";
     private static final String IBM_CLOUD_FIRST_FACTORY = "IBM CloudFirst Factory";
     private static final String IBM_SMART_CLOUD_ENTERPRISE = "IBM SmartCloud Enterprise";
     private static final String GOOGLE = "Google Compute Engine";
@@ -136,7 +136,7 @@ public class ClusterBuilderFrame extends javax.swing.JFrame implements ActionLis
 
         provider.setModel(new javax.swing.DefaultComboBoxModel(new String[] { AMAZON_US_EAST, AMAZON_US_WEST, AWS_CLOUD_GOV, GOOGLE, HP_CLOUD, IBM_SMART_CLOUD_ENTERPRISE, IBM_CLOUD_FIRST_FACTORY, RACKSPACE_NEXT_GENERATION }));
         Set<Integer> set = new HashSet<Integer>();
-        set.add(2);
+        set.add(2); set.add(5); set.add(6);
         provider.setDisableIndex(set);
 
         status.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
