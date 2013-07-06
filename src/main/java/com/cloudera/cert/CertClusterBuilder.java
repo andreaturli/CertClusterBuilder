@@ -20,6 +20,7 @@ import brooklyn.entity.basic.Entities;
 import brooklyn.entity.proxying.EntitySpecs;
 import brooklyn.launcher.BrooklynLauncher;
 import brooklyn.location.cloud.CloudLocationConfig;
+import brooklyn.location.vmware.vcloud.director.VCloudDirectorLocationConfig;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
@@ -75,13 +76,13 @@ public class CertClusterBuilder {
         return port;
     }
     
-    static void launch(final String cloudCode, final String cloudSpecifier, final String identity, final String credentials) {
+    static void launch(final String cloudCode, final String cloudSpecifier, final String endpoint, final String identity, final String credentials, final String cpuCount, final String memorySize) {
         pool.submit(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    CertClusterBuilder.deployCluster(cloudCode, cloudSpecifier, identity, credentials);
+                    CertClusterBuilder.deployCluster(cloudCode, cloudSpecifier, endpoint, identity, credentials, cpuCount, memorySize);
                 } catch (Exception e) {
                     log.error("Cannot deploy cluster with provider: " + cloudCode + 
                             (cloudSpecifier != null ? ":" + cloudSpecifier : "") + ", identity: " + identity + 
@@ -92,12 +93,21 @@ public class CertClusterBuilder {
         });
     }
     
-    private static void deployCluster(String cloudCode, String cloudSpecifier, String identity, String credentials) throws IOException {
+    private static void deployCluster(String cloudCode, String cloudSpecifier, String endpoint, String identity, String credentials, String cpuCount, String memorySize) throws IOException {
         BrooklynProperties brooklynProperties = BrooklynProperties.Factory.newEmpty();
         String access_identity = checkNotNull(Strings.emptyToNull(identity), "identity must not be null");
         String access_credential = checkNotNull(Strings.emptyToNull(credentials), "credentials must not be null");
+        if(!Strings.isNullOrEmpty(endpoint)) { log.debug("Endpoint is empty or null"); }
         brooklynProperties.put(CloudLocationConfig.ACCESS_IDENTITY, access_identity);
         brooklynProperties.put(CloudLocationConfig.ACCESS_CREDENTIAL, access_credential);
+        brooklynProperties.put(CloudLocationConfig.CLOUD_ENDPOINT, endpoint);
+        brooklynProperties.put(VCloudDirectorLocationConfig.CPU_COUNT, Integer.parseInt(cpuCount));
+        brooklynProperties.put(VCloudDirectorLocationConfig.MEMORY_SIZE_MB, Long.parseLong(memorySize));
+        
+        for(String key : brooklynProperties.asMapWithStringKeys().keySet()) {
+            log.info(key + "=" + brooklynProperties.asMapWithStringKeys().get(key));
+        }
+        
         String location = checkNotNull(Strings.emptyToNull(cloudCode), "cloudCode must not be null");
         if(!Strings.isNullOrEmpty(cloudSpecifier)) { location += ":" + cloudSpecifier; }
 
