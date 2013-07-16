@@ -94,15 +94,15 @@ public class CertClusterBuilder {
     }
     
     private static void deployCluster(String cloudCode, String cloudSpecifier, String endpoint, String identity, String credentials, String cpuCount, String memorySize) throws IOException {
-        BrooklynProperties brooklynProperties = BrooklynProperties.Factory.newEmpty();
+        BrooklynProperties brooklynProperties = BrooklynProperties.Factory.newDefault();
         String access_identity = checkNotNull(Strings.emptyToNull(identity), "identity must not be null");
         String access_credential = checkNotNull(Strings.emptyToNull(credentials), "credentials must not be null");
         if(!Strings.isNullOrEmpty(endpoint)) { log.debug("Endpoint is empty or null"); }
         brooklynProperties.put(CloudLocationConfig.ACCESS_IDENTITY, access_identity);
         brooklynProperties.put(CloudLocationConfig.ACCESS_CREDENTIAL, access_credential);
         brooklynProperties.put(CloudLocationConfig.CLOUD_ENDPOINT, endpoint);
-        brooklynProperties.put(VCloudDirectorLocationConfig.CPU_COUNT, Integer.parseInt(cpuCount));
-        brooklynProperties.put(VCloudDirectorLocationConfig.MEMORY_SIZE_MB, Long.parseLong(memorySize));
+        brooklynProperties.put(VCloudDirectorLocationConfig.CPU_COUNT, cpuCount);
+        brooklynProperties.put(VCloudDirectorLocationConfig.MEMORY_SIZE_MB, memorySize);
         
         for(String key : brooklynProperties.asMapWithStringKeys().keySet()) {
             log.info(key + "=" + brooklynProperties.asMapWithStringKeys().get(key));

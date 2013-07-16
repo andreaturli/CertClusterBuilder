@@ -88,10 +88,13 @@ public class ClusterBuilderFrame extends javax.swing.JFrame {
 
             public void itemStateChanged(ItemEvent event) {
                 Object item = event.getItem();
-                if(item.equals("Octocloud"))
-                endpoint.setEnabled(true);
-                else
-                endpoint.setEnabled(false);
+                if(item.equals("Octocloud") || item.equals("IBM CloudFirst Factory")) {
+                    endpoint.setEnabled(true);
+                    endpointLabel.setEnabled(true);
+                } else {
+                    endpoint.setEnabled(false);
+                    endpointLabel.setEnabled(false);
+                }
             }
 
         });
@@ -110,7 +113,7 @@ public class ClusterBuilderFrame extends javax.swing.JFrame {
         TextTransferHandler tth = new TextTransferHandler();
         endpoint.setTransferHandler(tth);
         endpoint.setDragEnabled(true);
-        jLabel13 = new javax.swing.JLabel();
+        endpointLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -208,8 +211,9 @@ public class ClusterBuilderFrame extends javax.swing.JFrame {
             }
         });
 
-        jLabel13.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
-        jLabel13.setText("Endpoint");
+        endpointLabel.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
+        endpointLabel.setText("Endpoint");
+        endpointLabel.setEnabled(false);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -224,60 +228,59 @@ public class ClusterBuilderFrame extends javax.swing.JFrame {
                     .add(layout.createSequentialGroup()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(jLabel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                .add(jLabel2)
-                                .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 467, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(layout.createSequentialGroup()
-                                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                                            .add(layout.createSequentialGroup()
-                                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                                    .add(jLabel3)
-                                                    .add(layout.createSequentialGroup()
-                                                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                                            .add(jLabel4)
-                                                            .add(jLabel9)
-                                                            .add(jLabel5))
-                                                        .add(32, 32, 32)
-                                                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                                                            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                                                                .add(org.jdesktop.layout.GroupLayout.LEADING, endpoint)
-                                                                .add(org.jdesktop.layout.GroupLayout.LEADING, passwordField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                .add(provider, 0, 187, Short.MAX_VALUE))
-                                                            .add(userField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 187, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                                                .add(60, 60, 60))
-                                            .add(layout.createSequentialGroup()
-                                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                                                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-                                                        .add(jLabel12)
-                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .add(memorySize, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 73, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                                                    .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
-                                                        .add(jLabel11)
-                                                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .add(cpuCount, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 73, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                                                .add(110, 110, 110)))
-                                        .add(jLabel10)
-                                        .add(jLabel13))
-                                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jLabel2)
+                            .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 467, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(layout.createSequentialGroup()
+                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                                         .add(layout.createSequentialGroup()
                                             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                                .add(jLabel3)
                                                 .add(layout.createSequentialGroup()
-                                                    .add(100, 100, 100)
-                                                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                                                        .add(brooklyn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .add(console, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .add(deploy, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                                .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                                                    .add(79, 79, 79)
-                                                    .add(jLabel7)
-                                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                                    .add(jLabel8)
-                                                    .add(9, 9, 9)))
-                                            .add(0, 41, Short.MAX_VALUE))
+                                                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                                        .add(jLabel4)
+                                                        .add(jLabel9)
+                                                        .add(jLabel5))
+                                                    .add(32, 32, 32)
+                                                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                                                            .add(org.jdesktop.layout.GroupLayout.LEADING, endpoint)
+                                                            .add(org.jdesktop.layout.GroupLayout.LEADING, passwordField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                            .add(provider, 0, 187, Short.MAX_VALUE))
+                                                        .add(userField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 187, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                                            .add(60, 60, 60))
                                         .add(layout.createSequentialGroup()
-                                            .add(109, 109, 109)
-                                            .add(status, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                                            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                                                .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
+                                                    .add(jLabel12)
+                                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .add(memorySize, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 73, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                                .add(org.jdesktop.layout.GroupLayout.LEADING, layout.createSequentialGroup()
+                                                    .add(jLabel11)
+                                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .add(cpuCount, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 73, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                                            .add(110, 110, 110)))
+                                    .add(jLabel10)
+                                    .add(endpointLabel))
+                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                    .add(layout.createSequentialGroup()
+                                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                            .add(layout.createSequentialGroup()
+                                                .add(100, 100, 100)
+                                                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                                                    .add(brooklyn, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .add(console, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .add(deploy, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                                                .add(79, 79, 79)
+                                                .add(jLabel7)
+                                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                                .add(jLabel8)
+                                                .add(9, 9, 9)))
+                                        .add(0, 41, Short.MAX_VALUE))
+                                    .add(layout.createSequentialGroup()
+                                        .add(109, 109, 109)
+                                        .add(status, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -315,7 +318,7 @@ public class ClusterBuilderFrame extends javax.swing.JFrame {
                                     .add(provider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                                    .add(jLabel13)
+                                    .add(endpointLabel)
                                     .add(endpoint, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
@@ -445,11 +448,11 @@ public class ClusterBuilderFrame extends javax.swing.JFrame {
     private javax.swing.JTextField cpuCount;
     private javax.swing.JButton deploy;
     private javax.swing.JTextField endpoint;
+    private javax.swing.JLabel endpointLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
